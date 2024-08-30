@@ -4,12 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.LruCache
-import com.rajat.pdfviewer.PdfRendererCore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 
 class CacheManager(private val context: Context) {
     private val memoryCache: LruCache<Int, Bitmap> = createMemoryCache()
@@ -47,12 +42,6 @@ class CacheManager(private val context: Context) {
 
     fun addBitmapToCache(pageNo: Int, bitmap: Bitmap) {
         memoryCache.put(pageNo, bitmap)
-        CoroutineScope(Dispatchers.IO).launch {
-            val file = File(cacheDir, pageNo.toString())
-            FileOutputStream(file).use { fos ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, fos)
-            }
-        }
     }
 
     fun pageExistsInCache(pageNo: Int): Boolean =
