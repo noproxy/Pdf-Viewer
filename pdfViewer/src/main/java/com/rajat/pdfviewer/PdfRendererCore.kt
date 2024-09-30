@@ -151,8 +151,12 @@
         private suspend fun <T> withPdfPage(pageNo: Int, block: (PdfRenderer.Page) -> T): T? =
             withContext(Dispatchers.IO) {
                 synchronized(this@PdfRendererCore) {
-                    pdfRenderer?.openPage(pageNo)?.use { page ->
-                        return@withContext block(page)
+                    try {
+                        pdfRenderer?.openPage(pageNo)?.use { page ->
+                            return@withContext block(page)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("PdfRendererCore", "Error opening page: ${e.message}", e)
                     }
                 }
                 null
