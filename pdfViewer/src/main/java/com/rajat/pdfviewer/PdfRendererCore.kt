@@ -187,7 +187,7 @@
             synchronized(this) {
                 if (!isRendererOpen) return null
                 closeAllOpenPages()
-                return pdfRenderer?.openPage(pageNo)?.also { page ->
+                return runCatching { pdfRenderer?.openPage(pageNo) }.getOrNull()?.also { page ->
                     openPages[pageNo] = page
                 }
             }
